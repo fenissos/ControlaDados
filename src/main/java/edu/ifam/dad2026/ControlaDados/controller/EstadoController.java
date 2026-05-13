@@ -2,10 +2,7 @@ package edu.ifam.dad2026.ControlaDados.controller;
 
 import edu.ifam.dad2026.ControlaDados.model.Estado;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,5 +33,27 @@ public class EstadoController {
     @GetMapping(value = "/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Estado getById(@PathVariable int index) {
         return estados.get(index);
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Estado create(@RequestBody Estado estado) {
+
+        estados.add(estado);
+
+        return estado;
+    }
+
+    @DeleteMapping(value = "/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Estado delete(@PathVariable int index) {
+
+        return estados.remove(index);
+    }
+
+    @PutMapping(value = "/{index}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Estado update(@PathVariable int index, @RequestBody Estado estado) {
+
+        estados.set(index, estado);
+
+        return estado;
     }
 }
