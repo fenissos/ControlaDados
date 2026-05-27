@@ -1,18 +1,40 @@
 package edu.ifam.dad2026.ControlaDados.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "cidade")
 public class Cidade {
 
-    private String nome;
-    private String ibge;
-    private String estado;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Cidade(){
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false, unique = true)
+    private String ibge;
+
+    @ManyToOne
+    @JoinColumn(name = "estado_id")
+    private Estado estado;
+
+    public Cidade() {
     }
 
-    public Cidade(String nome, String ibge, String estado) {
+    public Cidade(String nome, String ibge, Estado estado) {
         this.nome = nome;
         this.ibge = ibge;
         this.estado = estado;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -31,11 +53,11 @@ public class Cidade {
         this.ibge = ibge;
     }
 
-    public String getEstado() {
+    public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Estado estado) {
         this.estado = estado;
     }
 }

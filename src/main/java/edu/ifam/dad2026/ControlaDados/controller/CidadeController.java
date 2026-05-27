@@ -1,65 +1,58 @@
 package edu.ifam.dad2026.ControlaDados.controller;
 
+import edu.ifam.dad2026.ControlaDados.Repository.CidadeRepository;
 import edu.ifam.dad2026.ControlaDados.model.Cidade;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cidade")
 public class CidadeController {
 
-    private List<Cidade> cidades = new ArrayList<>();
-
-    private void carregarDados() {
-
-        cidades.add(new Cidade("Manaus", "1302603","Amazonas"));
-        cidades.add(new Cidade("Belém", "1501402","Pará"));
-        cidades.add(new Cidade("São Paulo","3550308","São Paulo"));
-    }
-
-    public CidadeController() {
-        carregarDados();
-    }
+    @Autowired
+    private CidadeRepository cidadeRepository;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Cidade> list() {
 
-        return cidades;
+        return cidadeRepository.findAll();
     }
 
-    @GetMapping(value = "/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Cidade getById(@PathVariable int index) {
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Cidade getById(@PathVariable Long id) {
 
-        return cidades.get(index);
+        Optional<Cidade> cidade = cidadeRepository.findById(id);
+        if (cidade.isPresent()) {
+            return cidade.get();
+        }
+        return null;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Cidade create(@RequestBody Cidade cidade) {
 
-        cidades.add(cidade);
-
-        return cidade;
+        return cidadeRepository.save(cidade);
     }
 
-    @PutMapping(value = "/{index}",
+    @DeleteMapping(value = "/{id}")
+    public void delete(@PathVariable Long id) {
+
+        cidadeRepository.deleteById(id);
+    }
+
+    @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Cidade update(@PathVariable int index,
+    public Cidade update(@PathVariable Long id,
                          @RequestBody Cidade cidade) {
 
-        cidades.set(index, cidade);
+        cidade.setId(id);
 
-        return cidade;
-    }
-
-    @DeleteMapping(value = "/{index}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public Cidade delete(@PathVariable int index) {
-
-        return cidades.remove(index);
+        return cidadeRepository.save(cidade);
     }
 }

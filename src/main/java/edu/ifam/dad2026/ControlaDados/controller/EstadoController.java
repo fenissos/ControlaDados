@@ -44,6 +44,7 @@ public class EstadoController {
 
         estadoRepository.deleteById(id);
     }
+
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
