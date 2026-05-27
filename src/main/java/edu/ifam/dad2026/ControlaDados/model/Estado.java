@@ -7,11 +7,15 @@ public class Estado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false, unique = true)
     private String sigla;
+
+    @Column(nullable = false, unique = true)
     private String ibge;
 
     public Estado() {
