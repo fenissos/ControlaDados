@@ -1,7 +1,14 @@
 package edu.ifam.dad2026.ControlaDados.model;
+import jakarta.persistence.*;
 
-
+@Entity
+@Table(name = "estado")
 public class Estado {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private Long id;
 
     private String nome;
     private String sigla;
@@ -14,6 +21,14 @@ public class Estado {
         this.nome = nome;
         this.sigla = sigla;
         this.ibge = ibge;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {

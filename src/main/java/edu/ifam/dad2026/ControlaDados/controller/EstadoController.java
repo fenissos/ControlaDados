@@ -1,59 +1,57 @@
 package edu.ifam.dad2026.ControlaDados.controller;
 
+import edu.ifam.dad2026.ControlaDados.Repository.EstadoRepository;
 import edu.ifam.dad2026.ControlaDados.model.Estado;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/estado")
 public class EstadoController {
 
-    private List<Estado> estados = new ArrayList<>();
-
-    private void carregarDados() {
-
-        estados.add(new Estado("Amazonas", "AM", "13"));
-        estados.add(new Estado("Para", "PA", "14"));
-        estados.add(new Estado("Sao Paulo", "SP", "15"));
-
-    }
-
-    public EstadoController() {
-        carregarDados();
-    }
+    @Autowired
+    private EstadoRepository estadoRepository;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Estado> list() {
-        return estados;
+
+        return estadoRepository.findAll();
     }
 
-    @GetMapping(value = "/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Estado getById(@PathVariable int index) {
-        return estados.get(index);
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Estado getById(@PathVariable Long id) {
+
+        Optional<Estado> estado = estadoRepository.findById(id);
+        if (estado.isPresent()) {
+            return estado.get();
+        }
+        return null;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Estado create(@RequestBody Estado estado) {
 
-        estados.add(estado);
-
-        return estado;
+        return estadoRepository.save(estado);
     }
 
-    @DeleteMapping(value = "/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Estado delete(@PathVariable int index) {
+    @DeleteMapping(value = "/{id}")
+    public void delete(@PathVariable Long id) {
 
-        return estados.remove(index);
+        estadoRepository.deleteById(id);
     }
+    @PutMapping(value = "/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Estado update(@PathVariable Long id,
+                         @RequestBody Estado estado) {
 
-    @PutMapping(value = "/{index}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Estado update(@PathVariable int index, @RequestBody Estado estado) {
+        estado.setId(id);
 
-        estados.set(index, estado);
-
-        return estado;
+        return estadoRepository.save(estado);
     }
 }
