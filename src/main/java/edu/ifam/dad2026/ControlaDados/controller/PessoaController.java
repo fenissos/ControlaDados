@@ -1,8 +1,8 @@
 package edu.ifam.dad2026.ControlaDados.controller;
 
-import edu.ifam.dad2026.ControlaDados.dto.EstadoInputDto;
-import edu.ifam.dad2026.ControlaDados.dto.EstadoOutputDto;
-import edu.ifam.dad2026.ControlaDados.service.EstadoService;
+import edu.ifam.dad2026.ControlaDados.dto.PessoaInputDto;
+import edu.ifam.dad2026.ControlaDados.dto.PessoaOutputDto;
+import edu.ifam.dad2026.ControlaDados.service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,23 +15,23 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/estado")
-public class EstadoController {
+@RequestMapping("/api/pessoa")
+public class PessoaController {
 
     @Autowired
-    private EstadoService estadoService;
+    private PessoaService pessoaService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<EstadoOutputDto>> list() {
-        return ResponseEntity.ok(estadoService.list());
+    public ResponseEntity<List<PessoaOutputDto>> list() {
+        return ResponseEntity.ok(pessoaService.list());
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EstadoOutputDto> getById(@PathVariable Long id) {
-        Optional<EstadoOutputDto> estado = estadoService.getById(id);
+    public ResponseEntity<PessoaOutputDto> getById(@PathVariable Long id) {
+        Optional<PessoaOutputDto> pessoa = pessoaService.getById(id);
 
-        if (estado.isPresent()) {
-            return ResponseEntity.ok(estado.get());
+        if (pessoa.isPresent()) {
+            return ResponseEntity.ok(pessoa.get());
         }
 
         return ResponseEntity.notFound().build();
@@ -39,33 +39,33 @@ public class EstadoController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EstadoOutputDto> create(
-            @RequestBody EstadoInputDto estadoInputDto,
+    public ResponseEntity<PessoaOutputDto> create(
+            @RequestBody PessoaInputDto pessoaInputDto,
             UriComponentsBuilder uriBuilder) {
 
-        EstadoOutputDto estadoOutputDto = estadoService.create(estadoInputDto);
+        PessoaOutputDto pessoaOutputDto = pessoaService.create(pessoaInputDto);
 
-        UriComponents uriComponents = uriBuilder.path("/api/estado/{id}")
-                .buildAndExpand(estadoOutputDto.getId());
+        UriComponents uriComponents = uriBuilder.path("/api/pessoa/{id}")
+                .buildAndExpand(pessoaOutputDto.getId());
 
         URI uri = uriComponents.toUri();
 
         return ResponseEntity.created(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(estadoOutputDto);
+                .body(pessoaOutputDto);
     }
 
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EstadoOutputDto> update(
+    public ResponseEntity<PessoaOutputDto> update(
             @PathVariable Long id,
-            @RequestBody EstadoInputDto estadoInputDto) {
+            @RequestBody PessoaInputDto pessoaInputDto) {
 
-        Optional<EstadoOutputDto> estado = estadoService.update(id, estadoInputDto);
+        Optional<PessoaOutputDto> pessoa = pessoaService.update(id, pessoaInputDto);
 
-        if (estado.isPresent()) {
-            return ResponseEntity.ok(estado.get());
+        if (pessoa.isPresent()) {
+            return ResponseEntity.ok(pessoa.get());
         }
 
         return ResponseEntity.notFound().build();
@@ -73,7 +73,7 @@ public class EstadoController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean removido = estadoService.delete(id);
+        boolean removido = pessoaService.delete(id);
 
         if (removido) {
             return ResponseEntity.noContent().build();
