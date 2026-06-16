@@ -10,6 +10,8 @@ public class PessoaOutputDto {
     private String email;
     private Long cidadeId;
     private String cidadeNome;
+    private Long estadoId;
+    private String estadoNome;
 
     public PessoaOutputDto() {
     }
@@ -23,6 +25,11 @@ public class PessoaOutputDto {
         if (pessoa.getCidade() != null) {
             this.cidadeId = pessoa.getCidade().getId();
             this.cidadeNome = pessoa.getCidade().getNome();
+
+            if (pessoa.getCidade().getEstado() != null) {
+                this.estadoId = pessoa.getCidade().getEstado().getId();
+                this.estadoNome = pessoa.getCidade().getEstado().getNome();
+            }
         }
     }
 
@@ -72,5 +79,21 @@ public class PessoaOutputDto {
 
     public void setCidadeNome(String cidadeNome) {
         this.cidadeNome = cidadeNome;
+    }
+
+    public Long getEstadoId() {
+        return estadoId;
+    }
+
+    public void setEstadoId(Long estadoId) {
+        this.estadoId = estadoId;
+    }
+
+    public String getEstadoNome() {
+        return estadoNome;
+    }
+
+    public void setEstadoNome(String estadoNome) {
+        this.estadoNome = estadoNome;
     }
 }
