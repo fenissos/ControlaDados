@@ -27,17 +27,19 @@ public class CidadeService {
                 .toList();
     }
 
-    public Optional<CidadeOutputDto> getById(Long id) {
-        Optional<Cidade> cidade = cidadeRepository.findById(id);
+    public Optional<CidadeOutputDto> getById(String id) {
 
-        if (cidade.isPresent()) {
-            return Optional.of(new CidadeOutputDto(cidade.get()));
+        Optional<Cidade> cidadeOptional = cidadeRepository.findByIbge(id);
+
+        if (cidadeOptional.isPresent()) {
+            return Optional.of(new CidadeOutputDto(cidadeOptional.get()));
         }
 
         return Optional.empty();
     }
 
     public CidadeOutputDto create(CidadeInputDto cidadeInputDto) {
+
         cidadeInputDto.setEstadoRepository(estadoRepository);
 
         Cidade cidade = cidadeInputDto.build();
@@ -48,9 +50,11 @@ public class CidadeService {
     }
 
     public Optional<CidadeOutputDto> update(Long id, CidadeInputDto cidadeInputDto) {
+
         Optional<Cidade> cidadeOptional = cidadeRepository.findById(id);
 
         if (cidadeOptional.isPresent()) {
+
             cidadeInputDto.setEstadoRepository(estadoRepository);
 
             Cidade cidade = cidadeInputDto.build();
@@ -65,9 +69,10 @@ public class CidadeService {
     }
 
     public boolean delete(Long id) {
-        Optional<Cidade> cidade = cidadeRepository.findById(id);
 
-        if (cidade.isPresent()) {
+        Optional<Cidade> cidadeOptional = cidadeRepository.findById(id);
+
+        if (cidadeOptional.isPresent()) {
             cidadeRepository.deleteById(id);
             return true;
         }

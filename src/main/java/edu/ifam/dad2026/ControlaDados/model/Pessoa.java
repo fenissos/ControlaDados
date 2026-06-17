@@ -16,60 +16,58 @@ public class Pessoa {
     @Column(nullable = false, unique = true)
     private String cpf;
 
-    @Column
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "cidade_id")
-    private Cidade cidade;
+    @Column(nullable = false)
+    private String cidadeIbge;
 
     public Pessoa() {
     }
 
-    public Pessoa(String nome, String cpf, String email, Cidade cidade) {
+    public Pessoa(String nome, String cpf, String email, String cidadeIbge) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
-        this.cidade = cidade;
+        this.cidadeIbge = cidadeIbge;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getNome() {
         return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
     public String getEmail() {
         return email;
+    }
+
+    public String getCidadeIbge() {
+        return cidadeIbge;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public Cidade getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(Cidade cidade) {
-        this.cidade = cidade;
+    public void setCidadeIbge(String cidadeIbge) {
+        this.cidadeIbge = cidadeIbge;
     }
 }

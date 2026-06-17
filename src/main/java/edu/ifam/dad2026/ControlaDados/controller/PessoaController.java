@@ -23,15 +23,17 @@ public class PessoaController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PessoaOutputDto>> list() {
+
         return ResponseEntity.ok(pessoaService.list());
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PessoaOutputDto> getById(@PathVariable Long id) {
-        Optional<PessoaOutputDto> pessoa = pessoaService.getById(id);
 
-        if (pessoa.isPresent()) {
-            return ResponseEntity.ok(pessoa.get());
+        Optional<PessoaOutputDto> pessoaOptional = pessoaService.getById(id);
+
+        if (pessoaOptional.isPresent()) {
+            return ResponseEntity.ok(pessoaOptional.get());
         }
 
         return ResponseEntity.notFound().build();
@@ -45,7 +47,8 @@ public class PessoaController {
 
         PessoaOutputDto pessoaOutputDto = pessoaService.create(pessoaInputDto);
 
-        UriComponents uriComponents = uriBuilder.path("/api/pessoa/{id}")
+        UriComponents uriComponents = uriBuilder
+                .path("/api/pessoa/{id}")
                 .buildAndExpand(pessoaOutputDto.getId());
 
         URI uri = uriComponents.toUri();
@@ -62,10 +65,10 @@ public class PessoaController {
             @PathVariable Long id,
             @RequestBody PessoaInputDto pessoaInputDto) {
 
-        Optional<PessoaOutputDto> pessoa = pessoaService.update(id, pessoaInputDto);
+        Optional<PessoaOutputDto> pessoaOptional = pessoaService.update(id, pessoaInputDto);
 
-        if (pessoa.isPresent()) {
-            return ResponseEntity.ok(pessoa.get());
+        if (pessoaOptional.isPresent()) {
+            return ResponseEntity.ok(pessoaOptional.get());
         }
 
         return ResponseEntity.notFound().build();
@@ -73,6 +76,7 @@ public class PessoaController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+
         boolean removido = pessoaService.delete(id);
 
         if (removido) {
