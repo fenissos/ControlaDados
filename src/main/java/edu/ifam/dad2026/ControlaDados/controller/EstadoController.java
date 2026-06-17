@@ -23,15 +23,22 @@ public class EstadoController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<EstadoOutputDto>> list() {
-        return ResponseEntity.ok(estadoService.list());
+
+        return ResponseEntity.ok(
+                estadoService.list()
+        );
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EstadoOutputDto> getById(@PathVariable Long id) {
-        Optional<EstadoOutputDto> estado = estadoService.getById(id);
+    public ResponseEntity<EstadoOutputDto> getById(@PathVariable String id) {
 
-        if (estado.isPresent()) {
-            return ResponseEntity.ok(estado.get());
+        Optional<EstadoOutputDto> estadoOptional =
+                estadoService.getById(id);
+
+        if (estadoOptional.isPresent()) {
+            return ResponseEntity.ok(
+                    estadoOptional.get()
+            );
         }
 
         return ResponseEntity.notFound().build();
@@ -43,10 +50,12 @@ public class EstadoController {
             @RequestBody EstadoInputDto estadoInputDto,
             UriComponentsBuilder uriBuilder) {
 
-        EstadoOutputDto estadoOutputDto = estadoService.create(estadoInputDto);
+        EstadoOutputDto estadoOutputDto =
+                estadoService.create(estadoInputDto);
 
-        UriComponents uriComponents = uriBuilder.path("/api/estado/{id}")
-                .buildAndExpand(estadoOutputDto.getId());
+        UriComponents uriComponents =
+                uriBuilder.path("/api/estado/{id}")
+                        .buildAndExpand(estadoOutputDto.getIbge());
 
         URI uri = uriComponents.toUri();
 
@@ -62,10 +71,13 @@ public class EstadoController {
             @PathVariable Long id,
             @RequestBody EstadoInputDto estadoInputDto) {
 
-        Optional<EstadoOutputDto> estado = estadoService.update(id, estadoInputDto);
+        Optional<EstadoOutputDto> estadoOptional =
+                estadoService.update(id, estadoInputDto);
 
-        if (estado.isPresent()) {
-            return ResponseEntity.ok(estado.get());
+        if (estadoOptional.isPresent()) {
+            return ResponseEntity.ok(
+                    estadoOptional.get()
+            );
         }
 
         return ResponseEntity.notFound().build();
@@ -73,7 +85,9 @@ public class EstadoController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean removido = estadoService.delete(id);
+
+        boolean removido =
+                estadoService.delete(id);
 
         if (removido) {
             return ResponseEntity.noContent().build();

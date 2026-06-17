@@ -1,9 +1,9 @@
 package edu.ifam.dad2026.ControlaDados.service;
 
 import edu.ifam.dad2026.ControlaDados.Repository.CidadeRepository;
-import edu.ifam.dad2026.ControlaDados.Repository.EstadoRepository;
 import edu.ifam.dad2026.ControlaDados.dto.CidadeInputDto;
 import edu.ifam.dad2026.ControlaDados.dto.CidadeOutputDto;
+import edu.ifam.dad2026.ControlaDados.dto.EstadoOutputDto;
 import edu.ifam.dad2026.ControlaDados.model.Cidade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,21 +18,34 @@ public class CidadeService {
     private CidadeRepository cidadeRepository;
 
     @Autowired
-    private EstadoRepository estadoRepository;
+    private EstadoClientServe estadoClientServe;
 
     public List<CidadeOutputDto> list() {
         return cidadeRepository.findAll()
                 .stream()
-                .map(CidadeOutputDto::new)
+                .map(cidade -> {
+                    EstadoOutputDto estado =
+                            estadoClientServe.buscarPorIbge(cidade.getEstadoIbge());
+
+                    return new CidadeOutputDto(cidade, estado);
+                })
                 .toList();
     }
 
-    public Optional<CidadeOutputDto> getById(String id) {
+    public Optional<CidadeOutputDto> getById(String ibge) {
 
-        Optional<Cidade> cidadeOptional = cidadeRepository.findByIbge(id);
+        Optional<Cidade> cidadeOptional =
+                cidadeRepository.findByIbge(ibge);
 
         if (cidadeOptional.isPresent()) {
-            return Optional.of(new CidadeOutputDto(cidadeOptional.get()));
+            Cidade cidade = cidadeOptional.get();
+
+            EstadoOutputDto estado =
+                    estadoClientServe.buscarPorIbge(cidade.getEstadoIbge());
+
+            return Optional.of(
+                    new CidadeOutputDto(cidade, estado)
+            );
         }
 
         return Optional.empty();
@@ -40,29 +53,46 @@ public class CidadeService {
 
     public CidadeOutputDto create(CidadeInputDto cidadeInputDto) {
 
-        cidadeInputDto.setEstadoRepository(estadoRepository);
+        EstadoOutputDto estado =
+                estadoClientServe.buscarPorIbge(cidadeInputDto.getEstadoIbge());
+
+        if (estado == null) {
+            throw new RuntimeException("Estado não encontrado para o IBGE: "
+                    + cidadeInputDto.getEstadoIbge());
+        }
 
         Cidade cidade = cidadeInputDto.build();
 
-        Cidade cidadeSalva = cidadeRepository.save(cidade);
+        Cidade cidadeSalva =
+                cidadeRepository.save(cidade);
 
-        return new CidadeOutputDto(cidadeSalva);
+        return new CidadeOutputDto(cidadeSalva, estado);
     }
 
     public Optional<CidadeOutputDto> update(Long id, CidadeInputDto cidadeInputDto) {
 
-        Optional<Cidade> cidadeOptional = cidadeRepository.findById(id);
+        Optional<Cidade> cidadeOptional =
+                cidadeRepository.findById(id);
 
         if (cidadeOptional.isPresent()) {
 
-            cidadeInputDto.setEstadoRepository(estadoRepository);
+            EstadoOutputDto estado =
+                    estadoClientServe.buscarPorIbge(cidadeInputDto.getEstadoIbge());
+
+            if (estado == null) {
+                throw new RuntimeException("Estado não encontrado para o IBGE: "
+                        + cidadeInputDto.getEstadoIbge());
+            }
 
             Cidade cidade = cidadeInputDto.build();
             cidade.setId(id);
 
-            Cidade cidadeSalva = cidadeRepository.save(cidade);
+            Cidade cidadeSalva =
+                    cidadeRepository.save(cidade);
 
-            return Optional.of(new CidadeOutputDto(cidadeSalva));
+            return Optional.of(
+                    new CidadeOutputDto(cidadeSalva, estado)
+            );
         }
 
         return Optional.empty();
@@ -70,7 +100,8 @@ public class CidadeService {
 
     public boolean delete(Long id) {
 
-        Optional<Cidade> cidadeOptional = cidadeRepository.findById(id);
+        Optional<Cidade> cidadeOptional =
+                cidadeRepository.findById(id);
 
         if (cidadeOptional.isPresent()) {
             cidadeRepository.deleteById(id);

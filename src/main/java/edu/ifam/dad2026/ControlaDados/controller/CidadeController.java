@@ -24,16 +24,21 @@ public class CidadeController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CidadeOutputDto>> list() {
 
-        return ResponseEntity.ok(cidadeService.list());
+        return ResponseEntity.ok(
+                cidadeService.list()
+        );
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CidadeOutputDto> getById(@PathVariable String id) {
 
-        Optional<CidadeOutputDto> cidadeOptional = cidadeService.getById(id);
+        Optional<CidadeOutputDto> cidadeOptional =
+                cidadeService.getById(id);
 
         if (cidadeOptional.isPresent()) {
-            return ResponseEntity.ok(cidadeOptional.get());
+            return ResponseEntity.ok(
+                    cidadeOptional.get()
+            );
         }
 
         return ResponseEntity.notFound().build();
@@ -45,11 +50,12 @@ public class CidadeController {
             @RequestBody CidadeInputDto cidadeInputDto,
             UriComponentsBuilder uriBuilder) {
 
-        CidadeOutputDto cidadeOutputDto = cidadeService.create(cidadeInputDto);
+        CidadeOutputDto cidadeOutputDto =
+                cidadeService.create(cidadeInputDto);
 
-        UriComponents uriComponents = uriBuilder
-                .path("/api/cidade/{id}")
-                .buildAndExpand(cidadeOutputDto.getIbge());
+        UriComponents uriComponents =
+                uriBuilder.path("/api/cidade/{id}")
+                        .buildAndExpand(cidadeOutputDto.getIbge());
 
         URI uri = uriComponents.toUri();
 
@@ -65,10 +71,13 @@ public class CidadeController {
             @PathVariable Long id,
             @RequestBody CidadeInputDto cidadeInputDto) {
 
-        Optional<CidadeOutputDto> cidadeOptional = cidadeService.update(id, cidadeInputDto);
+        Optional<CidadeOutputDto> cidadeOptional =
+                cidadeService.update(id, cidadeInputDto);
 
         if (cidadeOptional.isPresent()) {
-            return ResponseEntity.ok(cidadeOptional.get());
+            return ResponseEntity.ok(
+                    cidadeOptional.get()
+            );
         }
 
         return ResponseEntity.notFound().build();
@@ -77,7 +86,8 @@ public class CidadeController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
-        boolean removido = cidadeService.delete(id);
+        boolean removido =
+                cidadeService.delete(id);
 
         if (removido) {
             return ResponseEntity.noContent().build();

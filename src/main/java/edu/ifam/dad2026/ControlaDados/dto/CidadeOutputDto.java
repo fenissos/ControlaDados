@@ -1,23 +1,22 @@
 package edu.ifam.dad2026.ControlaDados.dto;
 
 import edu.ifam.dad2026.ControlaDados.model.Cidade;
-import edu.ifam.dad2026.ControlaDados.model.Estado;
 
 public class CidadeOutputDto {
 
     private Long id;
     private String nome;
     private String ibge;
-    private Estado estado;
+    private EstadoOutputDto estado;
 
     public CidadeOutputDto() {
     }
 
-    public CidadeOutputDto(Cidade cidade) {
+    public CidadeOutputDto(Cidade cidade, EstadoOutputDto estado) {
         this.id = cidade.getId();
         this.nome = cidade.getNome();
         this.ibge = cidade.getIbge();
-        this.estado = cidade.getEstado();
+        this.estado = estado;
     }
 
     public Long getId() {
@@ -32,7 +31,7 @@ public class CidadeOutputDto {
         return ibge;
     }
 
-    public Estado getEstado() {
+    public EstadoOutputDto getEstado() {
         return estado;
     }
 
@@ -48,7 +47,7 @@ public class CidadeOutputDto {
         this.ibge = ibge;
     }
 
-    public void setEstado(Estado estado) {
+    public void setEstado(EstadoOutputDto estado) {
         this.estado = estado;
     }
 }

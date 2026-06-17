@@ -6,48 +6,46 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class ClientePessoa {
+public class ClienteCidade {
 
-    private static final String BASE_URL = "http://localhost:8081/api/pessoa";
+    private static final String BASE_URL = "http://localhost:8081/api/cidade";
 
     private static final HttpClient client = HttpClient.newHttpClient();
 
     public static void main(String[] args) {
 
         try {
-            System.out.println("=== INICIANDO TESTES DO WEBSERVICE PESSOA ===\n");
+            System.out.println("=== INICIANDO TESTES DO WEBSERVICE CIDADE ===\n");
 
-            String novaPessoaJson = """
-        {
-            "nome": "Joao",
-            "cpf": "98765432100",
-            "email": "joao@email.com",
-            "cidadeIbge": "1302603"
-        }
-        """;
+            String novaCidadeJson = """
+                    {
+                        "nome": "Joinville",
+                        "ibge": "4209102",
+                        "estadoIbge": "42"
+                    }
+                    """;
 
-            cadastrarPessoa(novaPessoaJson);
+            cadastrarCidade(novaCidadeJson);
 
-            listarPessoas();
+            listarCidades();
 
-            buscarPessoaPorId(1L);
+            buscarCidadePorIbge("4209102");
 
-            String pessoaAtualizadaJson = """
-        {
-            "nome": "Joao Atualizado",
-            "cpf": "98765432100",
-            "email": "joao.atualizado@email.com",
-            "cidadeIbge": "1302603"
-        }
-        """;
+            String cidadeAtualizadaJson = """
+                    {
+                        "nome": "Joinville Atualizada",
+                        "ibge": "4209102",
+                        "estadoIbge": "42"
+                    }
+                    """;
 
-            atualizarPessoa(1L, pessoaAtualizadaJson);
+            atualizarCidade(4L, cidadeAtualizadaJson);
 
-            buscarPessoaPorId(1L);
+            buscarCidadePorIbge("4209102");
 
-            // deletarPessoa(1L);
+            // deletarCidade(4L);
 
-            listarPessoas();
+            listarCidades();
 
         } catch (Exception e) {
             System.out.println("Erro ao executar cliente: " + e.getMessage());
@@ -55,7 +53,7 @@ public class ClientePessoa {
         }
     }
 
-    public static void cadastrarPessoa(String json) throws IOException, InterruptedException {
+    public static void cadastrarCidade(String json) throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL))
@@ -66,14 +64,14 @@ public class ClientePessoa {
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("--- [POST] Cadastrando pessoa ---");
+        System.out.println("--- [POST] Cadastrando cidade ---");
         System.out.println("Status: " + response.statusCode());
         System.out.println("Response Body:");
         System.out.println(response.body());
         System.out.println();
     }
 
-    public static void listarPessoas() throws IOException, InterruptedException {
+    public static void listarCidades() throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL))
@@ -83,31 +81,31 @@ public class ClientePessoa {
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("--- [GET] Listando pessoas ---");
+        System.out.println("--- [GET] Listando cidades ---");
         System.out.println("Status: " + response.statusCode());
         System.out.println("Response Body:");
         System.out.println(response.body());
         System.out.println();
     }
 
-    public static void buscarPessoaPorId(Long id) throws IOException, InterruptedException {
+    public static void buscarCidadePorIbge(String ibge) throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/" + id))
+                .uri(URI.create(BASE_URL + "/" + ibge))
                 .GET()
                 .build();
 
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("--- [GET] Buscando pessoa por ID ---");
+        System.out.println("--- [GET] Buscando cidade por IBGE ---");
         System.out.println("Status: " + response.statusCode());
         System.out.println("Response Body:");
         System.out.println(response.body());
         System.out.println();
     }
 
-    public static void atualizarPessoa(Long id, String json) throws IOException, InterruptedException {
+    public static void atualizarCidade(Long id, String json) throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/" + id))
@@ -118,14 +116,14 @@ public class ClientePessoa {
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("--- [PUT] Atualizando pessoa ---");
+        System.out.println("--- [PUT] Atualizando cidade ---");
         System.out.println("Status: " + response.statusCode());
         System.out.println("Response Body:");
         System.out.println(response.body());
         System.out.println();
     }
 
-    public static void deletarPessoa(Long id) throws IOException, InterruptedException {
+    public static void deletarCidade(Long id) throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/" + id))
@@ -135,7 +133,7 @@ public class ClientePessoa {
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("--- [DELETE] Deletando pessoa ---");
+        System.out.println("--- [DELETE] Deletando cidade ---");
         System.out.println("Status: " + response.statusCode());
         System.out.println("Response Body:");
         System.out.println(response.body());

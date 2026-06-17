@@ -16,48 +16,47 @@ public class Cidade {
     @Column(nullable = false, unique = true)
     private String ibge;
 
-    @ManyToOne
-    @JoinColumn(name = "estado_id")
-    private Estado estado;
+    @Column(nullable = false)
+    private String estadoIbge;
 
     public Cidade() {
     }
 
-    public Cidade(String nome, String ibge, Estado estado) {
+    public Cidade(String nome, String ibge, String estadoIbge) {
         this.nome = nome;
         this.ibge = ibge;
-        this.estado = estado;
+        this.estadoIbge = estadoIbge;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getNome() {
         return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public String getIbge() {
         return ibge;
     }
 
+    public String getEstadoIbge() {
+        return estadoIbge;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
     public void setIbge(String ibge) {
         this.ibge = ibge;
     }
 
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
+    public void setEstadoIbge(String estadoIbge) {
+        this.estadoIbge = estadoIbge;
     }
 }
