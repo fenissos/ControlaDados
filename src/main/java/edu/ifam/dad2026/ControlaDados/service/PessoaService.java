@@ -6,7 +6,9 @@ import edu.ifam.dad2026.ControlaDados.dto.PessoaInputDto;
 import edu.ifam.dad2026.ControlaDados.dto.PessoaOutputDto;
 import edu.ifam.dad2026.ControlaDados.model.Pessoa;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,13 +56,11 @@ public class PessoaService {
 
     public PessoaOutputDto create(PessoaInputDto pessoaInputDto) {
 
+        CidadeOutputDto cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
+
         Pessoa pessoa = pessoaInputDto.build();
 
         Pessoa pessoaSalva = pessoaRepository.save(pessoa);
-
-        CidadeOutputDto cidade = cidadeClientServe.buscarPorIbge(
-                pessoaSalva.getCidadeIbge()
-        );
 
         return new PessoaOutputDto(pessoaSalva, cidade);
     }
@@ -71,15 +71,13 @@ public class PessoaService {
 
         if (pessoaOptional.isPresent()) {
 
+            CidadeOutputDto cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
+
             Pessoa pessoa = pessoaInputDto.build();
 
             pessoa.setId(id);
 
             Pessoa pessoaSalva = pessoaRepository.save(pessoa);
-
-            CidadeOutputDto cidade = cidadeClientServe.buscarPorIbge(
-                    pessoaSalva.getCidadeIbge()
-            );
 
             return Optional.of(new PessoaOutputDto(pessoaSalva, cidade));
         }
@@ -97,5 +95,19 @@ public class PessoaService {
         }
 
         return false;
+    }
+
+    private CidadeOutputDto buscarCidadeObrigatoria(String cidadeIbge) {
+
+        CidadeOutputDto cidade = cidadeClientServe.buscarPorIbge(cidadeIbge);
+
+        if (cidade == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Cidade não encontrada para o IBGE: " + cidadeIbge
+            );
+        }
+
+        return cidade;
     }
 }
