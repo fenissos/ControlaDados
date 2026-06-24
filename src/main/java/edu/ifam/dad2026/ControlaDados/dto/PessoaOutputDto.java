@@ -13,6 +13,14 @@ public class PessoaOutputDto {
     public PessoaOutputDto() {
     }
 
+    public PessoaOutputDto(Pessoa pessoa) {
+        this.id = pessoa.getId();
+        this.nome = pessoa.getNome();
+        this.cpf = pessoa.getCpf();
+        this.email = pessoa.getEmail();
+        this.cidade = new CidadeOutputDto(pessoa.getCidade());
+    }
+
     public PessoaOutputDto(Pessoa pessoa, CidadeOutputDto cidade) {
         this.id = pessoa.getId();
         this.nome = pessoa.getNome();

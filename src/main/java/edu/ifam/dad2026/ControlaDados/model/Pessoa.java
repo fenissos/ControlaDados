@@ -18,17 +18,18 @@ public class Pessoa {
 
     private String email;
 
-    @Column(nullable = false)
-    private String cidadeIbge;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cidade_id")
+    private Cidade cidade;
 
     public Pessoa() {
     }
 
-    public Pessoa(String nome, String cpf, String email, String cidadeIbge) {
+    public Pessoa(String nome, String cpf, String email, Cidade cidade) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
-        this.cidadeIbge = cidadeIbge;
+        this.cidade = cidade;
     }
 
     public Long getId() {
@@ -47,8 +48,8 @@ public class Pessoa {
         return email;
     }
 
-    public String getCidadeIbge() {
-        return cidadeIbge;
+    public Cidade getCidade() {
+        return cidade;
     }
 
     public void setId(Long id) {
@@ -67,7 +68,7 @@ public class Pessoa {
         this.email = email;
     }
 
-    public void setCidadeIbge(String cidadeIbge) {
-        this.cidadeIbge = cidadeIbge;
+    public void setCidade(Cidade cidade) {
+        this.cidade = cidade;
     }
 }

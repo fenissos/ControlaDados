@@ -1,9 +1,10 @@
 package edu.ifam.dad2026.ControlaDados.service;
 
 import edu.ifam.dad2026.ControlaDados.Repository.PessoaRepository;
-import edu.ifam.dad2026.ControlaDados.dto.CidadeOutputDto;
+import edu.ifam.dad2026.ControlaDados.Repository.CidadeRepository;
 import edu.ifam.dad2026.ControlaDados.dto.PessoaInputDto;
 import edu.ifam.dad2026.ControlaDados.dto.PessoaOutputDto;
+import edu.ifam.dad2026.ControlaDados.model.Cidade;
 import edu.ifam.dad2026.ControlaDados.model.Pessoa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,19 +21,13 @@ public class PessoaService {
     private PessoaRepository pessoaRepository;
 
     @Autowired
-    private CidadeClientServe cidadeClientServe;
+    private CidadeRepository cidadeRepository;
 
     public List<PessoaOutputDto> list() {
 
         return pessoaRepository.findAll()
                 .stream()
-                .map(pessoa -> {
-                    CidadeOutputDto cidade = cidadeClientServe.buscarPorIbge(
-                            pessoa.getCidadeIbge()
-                    );
-
-                    return new PessoaOutputDto(pessoa, cidade);
-                })
+                .map(PessoaOutputDto::new)
                 .toList();
     }
 
@@ -44,11 +39,7 @@ public class PessoaService {
 
             Pessoa pessoa = pessoaOptional.get();
 
-            CidadeOutputDto cidade = cidadeClientServe.buscarPorIbge(
-                    pessoa.getCidadeIbge()
-            );
-
-            return Optional.of(new PessoaOutputDto(pessoa, cidade));
+            return Optional.of(new PessoaOutputDto(pessoa));
         }
 
         return Optional.empty();
@@ -56,13 +47,13 @@ public class PessoaService {
 
     public PessoaOutputDto create(PessoaInputDto pessoaInputDto) {
 
-        CidadeOutputDto cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
+        Cidade cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
 
-        Pessoa pessoa = pessoaInputDto.build();
+        Pessoa pessoa = pessoaInputDto.build(cidade);
 
         Pessoa pessoaSalva = pessoaRepository.save(pessoa);
 
-        return new PessoaOutputDto(pessoaSalva, cidade);
+        return new PessoaOutputDto(pessoaSalva);
     }
 
     public Optional<PessoaOutputDto> update(Long id, PessoaInputDto pessoaInputDto) {
@@ -71,15 +62,15 @@ public class PessoaService {
 
         if (pessoaOptional.isPresent()) {
 
-            CidadeOutputDto cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
+            Cidade cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
 
-            Pessoa pessoa = pessoaInputDto.build();
+            Pessoa pessoa = pessoaInputDto.build(cidade);
 
             pessoa.setId(id);
 
             Pessoa pessoaSalva = pessoaRepository.save(pessoa);
 
-            return Optional.of(new PessoaOutputDto(pessoaSalva, cidade));
+            return Optional.of(new PessoaOutputDto(pessoaSalva));
         }
 
         return Optional.empty();
@@ -97,17 +88,12 @@ public class PessoaService {
         return false;
     }
 
-    private CidadeOutputDto buscarCidadeObrigatoria(String cidadeIbge) {
+    private Cidade buscarCidadeObrigatoria(String cidadeIbge) {
 
-        CidadeOutputDto cidade = cidadeClientServe.buscarPorIbge(cidadeIbge);
-
-        if (cidade == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Cidade não encontrada para o IBGE: " + cidadeIbge
-            );
-        }
-
-        return cidade;
+        return cidadeRepository.findByIbge(cidadeIbge)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Cidade não encontrada para o IBGE: " + cidadeIbge
+                ));
     }
 }

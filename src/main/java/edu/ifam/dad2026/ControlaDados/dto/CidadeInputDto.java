@@ -1,6 +1,7 @@
 package edu.ifam.dad2026.ControlaDados.dto;
 
 import edu.ifam.dad2026.ControlaDados.model.Cidade;
+import edu.ifam.dad2026.ControlaDados.model.Estado;
 
 public class CidadeInputDto {
 
@@ -11,8 +12,8 @@ public class CidadeInputDto {
     public CidadeInputDto() {
     }
 
-    public Cidade build() {
-        return new Cidade(nome, ibge, estadoIbge);
+    public Cidade build(Estado estado) {
+        return new Cidade(nome, ibge, estado);
     }
 
     public String getNome() {

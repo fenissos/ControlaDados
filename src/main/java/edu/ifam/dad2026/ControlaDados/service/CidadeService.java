@@ -1,10 +1,11 @@
 package edu.ifam.dad2026.ControlaDados.service;
 
 import edu.ifam.dad2026.ControlaDados.Repository.CidadeRepository;
+import edu.ifam.dad2026.ControlaDados.Repository.EstadoRepository;
 import edu.ifam.dad2026.ControlaDados.dto.CidadeInputDto;
 import edu.ifam.dad2026.ControlaDados.dto.CidadeOutputDto;
-import edu.ifam.dad2026.ControlaDados.dto.EstadoOutputDto;
 import edu.ifam.dad2026.ControlaDados.model.Cidade;
+import edu.ifam.dad2026.ControlaDados.model.Estado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,12 @@ public class CidadeService {
     private CidadeRepository cidadeRepository;
 
     @Autowired
-    private EstadoClientServe estadoClientServe;
+    private EstadoRepository estadoRepository;
 
     public List<CidadeOutputDto> list() {
         return cidadeRepository.findAll()
                 .stream()
-                .map(cidade -> {
-                    EstadoOutputDto estado =
-                            estadoClientServe.buscarPorIbge(cidade.getEstadoIbge());
-
-                    return new CidadeOutputDto(cidade, estado);
-                })
+                .map(CidadeOutputDto::new)
                 .toList();
     }
 
@@ -42,11 +38,8 @@ public class CidadeService {
         if (cidadeOptional.isPresent()) {
             Cidade cidade = cidadeOptional.get();
 
-            EstadoOutputDto estado =
-                    estadoClientServe.buscarPorIbge(cidade.getEstadoIbge());
-
             return Optional.of(
-                    new CidadeOutputDto(cidade, estado)
+                    new CidadeOutputDto(cidade)
             );
         }
 
@@ -55,22 +48,14 @@ public class CidadeService {
 
     public CidadeOutputDto create(CidadeInputDto cidadeInputDto) {
 
-        EstadoOutputDto estado =
-                estadoClientServe.buscarPorIbge(cidadeInputDto.getEstadoIbge());
+        Estado estado = buscarEstadoObrigatorio(cidadeInputDto.getEstadoIbge());
 
-        if (estado == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Estado não encontrado para o IBGE: " + cidadeInputDto.getEstadoIbge()
-            );
-        }
-
-        Cidade cidade = cidadeInputDto.build();
+        Cidade cidade = cidadeInputDto.build(estado);
 
         Cidade cidadeSalva =
                 cidadeRepository.save(cidade);
 
-        return new CidadeOutputDto(cidadeSalva, estado);
+        return new CidadeOutputDto(cidadeSalva);
     }
 
     public Optional<CidadeOutputDto> update(Long id, CidadeInputDto cidadeInputDto) {
@@ -80,24 +65,16 @@ public class CidadeService {
 
         if (cidadeOptional.isPresent()) {
 
-            EstadoOutputDto estado =
-                    estadoClientServe.buscarPorIbge(cidadeInputDto.getEstadoIbge());
+            Estado estado = buscarEstadoObrigatorio(cidadeInputDto.getEstadoIbge());
 
-            if (estado == null) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Estado não encontrado para o IBGE: " + cidadeInputDto.getEstadoIbge()
-                );
-            }
-
-            Cidade cidade = cidadeInputDto.build();
+            Cidade cidade = cidadeInputDto.build(estado);
             cidade.setId(id);
 
             Cidade cidadeSalva =
                     cidadeRepository.save(cidade);
 
             return Optional.of(
-                    new CidadeOutputDto(cidadeSalva, estado)
+                    new CidadeOutputDto(cidadeSalva)
             );
         }
 
@@ -115,5 +92,14 @@ public class CidadeService {
         }
 
         return false;
+    }
+
+    private Estado buscarEstadoObrigatorio(String estadoIbge) {
+
+        return estadoRepository.findByIbge(estadoIbge)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Estado não encontrado para o IBGE: " + estadoIbge
+                ));
     }
 }

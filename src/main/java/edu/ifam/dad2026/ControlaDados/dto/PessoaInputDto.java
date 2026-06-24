@@ -1,6 +1,7 @@
 package edu.ifam.dad2026.ControlaDados.dto;
 
 import edu.ifam.dad2026.ControlaDados.model.Pessoa;
+import edu.ifam.dad2026.ControlaDados.model.Cidade;
 
 public class PessoaInputDto {
 
@@ -12,8 +13,8 @@ public class PessoaInputDto {
     public PessoaInputDto() {
     }
 
-    public Pessoa build() {
-        return new Pessoa(nome, cpf, email, cidadeIbge);
+    public Pessoa build(Cidade cidade) {
+        return new Pessoa(nome, cpf, email, cidade);
     }
 
     public String getNome() {

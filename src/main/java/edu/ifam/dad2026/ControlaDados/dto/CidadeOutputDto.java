@@ -12,6 +12,13 @@ public class CidadeOutputDto {
     public CidadeOutputDto() {
     }
 
+    public CidadeOutputDto(Cidade cidade) {
+        this.id = cidade.getId();
+        this.nome = cidade.getNome();
+        this.ibge = cidade.getIbge();
+        this.estado = new EstadoOutputDto(cidade.getEstado());
+    }
+
     public CidadeOutputDto(Cidade cidade, EstadoOutputDto estado) {
         this.id = cidade.getId();
         this.nome = cidade.getNome();
