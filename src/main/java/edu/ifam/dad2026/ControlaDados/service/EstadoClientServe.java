@@ -39,7 +39,7 @@ public class EstadoClientServe {
 
         if (estados != null) {
             for (EstadoOutputDto estado : estados) {
-                if (ibge.equals(estado.getIbge())) {
+                if (ibge.equals(estado.getIbge()) || ibge.equals(estado.getSigla())) {
                     return estado;
                 }
             }
