@@ -4,6 +4,7 @@ import edu.ifam.dad2026.ControlaDados.Repository.CidadeRepository;
 import edu.ifam.dad2026.ControlaDados.Repository.EstadoRepository;
 import edu.ifam.dad2026.ControlaDados.dto.CidadeInputDto;
 import edu.ifam.dad2026.ControlaDados.dto.CidadeOutputDto;
+import edu.ifam.dad2026.ControlaDados.dto.EstadoOutputDto;
 import edu.ifam.dad2026.ControlaDados.model.Cidade;
 import edu.ifam.dad2026.ControlaDados.model.Estado;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class CidadeService {
 
     @Autowired
     private EstadoRepository estadoRepository;
+
+    @Autowired
+    private EstadoClientServe estadoClientServe;
 
     public List<CidadeOutputDto> list() {
         return cidadeRepository.findAll()
@@ -96,10 +100,37 @@ public class CidadeService {
 
     private Estado buscarEstadoObrigatorio(String estadoIbge) {
 
-        return estadoRepository.findByIbge(estadoIbge)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Estado não encontrado para o IBGE: " + estadoIbge
-                ));
+        EstadoOutputDto estadoRemoto = estadoClientServe.buscarPorIbge(estadoIbge);
+
+        if (estadoRemoto == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Estado não encontrado para o IBGE: " + estadoIbge
+            );
+        }
+
+        return estadoRepository.findByIbge(estadoRemoto.getIbge())
+                .map(estado -> atualizarEstadoLocal(estado, estadoRemoto))
+                .orElseGet(() -> salvarEstadoLocal(estadoRemoto));
+    }
+
+    private Estado salvarEstadoLocal(EstadoOutputDto estadoRemoto) {
+
+        Estado estado = new Estado(
+                estadoRemoto.getNome(),
+                estadoRemoto.getSigla(),
+                estadoRemoto.getIbge()
+        );
+
+        return estadoRepository.save(estado);
+    }
+
+    private Estado atualizarEstadoLocal(Estado estado, EstadoOutputDto estadoRemoto) {
+
+        estado.setNome(estadoRemoto.getNome());
+        estado.setSigla(estadoRemoto.getSigla());
+        estado.setIbge(estadoRemoto.getIbge());
+
+        return estadoRepository.save(estado);
     }
 }
