@@ -16,7 +16,9 @@ public class CidadeOutputDto {
         this.id = cidade.getId();
         this.nome = cidade.getNome();
         this.ibge = cidade.getIbge();
-        this.estado = new EstadoOutputDto(cidade.getEstado());
+        if (cidade.getEstado() != null) {
+            this.estado = new EstadoOutputDto(cidade.getEstado());
+        }
     }
 
     public CidadeOutputDto(Cidade cidade, EstadoOutputDto estado) {

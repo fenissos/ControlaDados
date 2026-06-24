@@ -18,6 +18,9 @@ public class Pessoa {
 
     private String email;
 
+    @Column
+    private Integer sexo;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
@@ -25,10 +28,11 @@ public class Pessoa {
     public Pessoa() {
     }
 
-    public Pessoa(String nome, String cpf, String email, Cidade cidade) {
+    public Pessoa(String nome, String cpf, String email, Integer sexo, Cidade cidade) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
+        this.sexo = sexo;
         this.cidade = cidade;
     }
 
@@ -46,6 +50,10 @@ public class Pessoa {
 
     public String getEmail() {
         return email;
+    }
+
+    public Integer getSexo() {
+        return sexo;
     }
 
     public Cidade getCidade() {
@@ -66,6 +74,10 @@ public class Pessoa {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setSexo(Integer sexo) {
+        this.sexo = sexo;
     }
 
     public void setCidade(Cidade cidade) {

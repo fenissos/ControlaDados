@@ -47,6 +47,8 @@ public class PessoaService {
 
     public PessoaOutputDto create(PessoaInputDto pessoaInputDto) {
 
+        validarSexo(pessoaInputDto.getSexo());
+
         Cidade cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
 
         Pessoa pessoa = pessoaInputDto.build(cidade);
@@ -61,6 +63,8 @@ public class PessoaService {
         Optional<Pessoa> pessoaOptional = pessoaRepository.findById(id);
 
         if (pessoaOptional.isPresent()) {
+
+            validarSexo(pessoaInputDto.getSexo());
 
             Cidade cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
 
@@ -95,5 +99,15 @@ public class PessoaService {
                         HttpStatus.BAD_REQUEST,
                         "Cidade não encontrada para o IBGE: " + cidadeIbge
                 ));
+    }
+
+    private void validarSexo(Integer sexo) {
+
+        if (sexo == null || (sexo != 0 && sexo != 1)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Sexo inválido. Use 0 para MASCULINO ou 1 para FEMININO"
+            );
+        }
     }
 }
