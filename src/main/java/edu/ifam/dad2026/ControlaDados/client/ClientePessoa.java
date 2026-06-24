@@ -22,7 +22,7 @@ public class ClientePessoa {
             "nome": "Joao",
             "cpf": "98765432100",
             "email": "joao@email.com",
-            "sexo": 0,
+            "generoId": 1,
             "cidadeIbge": "1302603"
         }
         """;
@@ -38,7 +38,7 @@ public class ClientePessoa {
             "nome": "Joao Atualizado",
             "cpf": "98765432100",
             "email": "joao.atualizado@email.com",
-            "sexo": 0,
+            "generoId": 1,
             "cidadeIbge": "1302603"
         }
         """;

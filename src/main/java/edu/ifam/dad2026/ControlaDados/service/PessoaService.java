@@ -2,9 +2,11 @@ package edu.ifam.dad2026.ControlaDados.service;
 
 import edu.ifam.dad2026.ControlaDados.Repository.PessoaRepository;
 import edu.ifam.dad2026.ControlaDados.Repository.CidadeRepository;
+import edu.ifam.dad2026.ControlaDados.Repository.GeneroRepository;
 import edu.ifam.dad2026.ControlaDados.dto.PessoaInputDto;
 import edu.ifam.dad2026.ControlaDados.dto.PessoaOutputDto;
 import edu.ifam.dad2026.ControlaDados.model.Cidade;
+import edu.ifam.dad2026.ControlaDados.model.Genero;
 import edu.ifam.dad2026.ControlaDados.model.Pessoa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,9 @@ public class PessoaService {
 
     @Autowired
     private CidadeRepository cidadeRepository;
+
+    @Autowired
+    private GeneroRepository generoRepository;
 
     public List<PessoaOutputDto> list() {
 
@@ -47,11 +52,10 @@ public class PessoaService {
 
     public PessoaOutputDto create(PessoaInputDto pessoaInputDto) {
 
-        validarSexo(pessoaInputDto.getSexo());
-
         Cidade cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
+        Genero genero = buscarGeneroObrigatorio(pessoaInputDto.getGeneroId());
 
-        Pessoa pessoa = pessoaInputDto.build(cidade);
+        Pessoa pessoa = pessoaInputDto.build(cidade, genero);
 
         Pessoa pessoaSalva = pessoaRepository.save(pessoa);
 
@@ -64,11 +68,10 @@ public class PessoaService {
 
         if (pessoaOptional.isPresent()) {
 
-            validarSexo(pessoaInputDto.getSexo());
-
             Cidade cidade = buscarCidadeObrigatoria(pessoaInputDto.getCidadeIbge());
+            Genero genero = buscarGeneroObrigatorio(pessoaInputDto.getGeneroId());
 
-            Pessoa pessoa = pessoaInputDto.build(cidade);
+            Pessoa pessoa = pessoaInputDto.build(cidade, genero);
 
             pessoa.setId(id);
 
@@ -101,13 +104,19 @@ public class PessoaService {
                 ));
     }
 
-    private void validarSexo(Integer sexo) {
+    private Genero buscarGeneroObrigatorio(Long generoId) {
 
-        if (sexo == null || (sexo != 0 && sexo != 1)) {
+        if (generoId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Sexo inválido. Use 0 para MASCULINO ou 1 para FEMININO"
+                    "Gênero é obrigatório"
             );
         }
+
+        return generoRepository.findById(generoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Gênero não encontrado para o ID: " + generoId
+                ));
     }
 }

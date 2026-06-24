@@ -8,7 +8,7 @@ public class PessoaOutputDto {
     private String nome;
     private String cpf;
     private String email;
-    private Integer sexo;
+    private GeneroOutputDto genero;
     private CidadeOutputDto cidade;
 
     public PessoaOutputDto() {
@@ -19,7 +19,9 @@ public class PessoaOutputDto {
         this.nome = pessoa.getNome();
         this.cpf = pessoa.getCpf();
         this.email = pessoa.getEmail();
-        this.sexo = pessoa.getSexo();
+        if (pessoa.getGenero() != null) {
+            this.genero = new GeneroOutputDto(pessoa.getGenero());
+        }
         this.cidade = new CidadeOutputDto(pessoa.getCidade());
     }
 
@@ -28,7 +30,9 @@ public class PessoaOutputDto {
         this.nome = pessoa.getNome();
         this.cpf = pessoa.getCpf();
         this.email = pessoa.getEmail();
-        this.sexo = pessoa.getSexo();
+        if (pessoa.getGenero() != null) {
+            this.genero = new GeneroOutputDto(pessoa.getGenero());
+        }
         this.cidade = cidade;
     }
 
@@ -48,8 +52,8 @@ public class PessoaOutputDto {
         return email;
     }
 
-    public Integer getSexo() {
-        return sexo;
+    public GeneroOutputDto getGenero() {
+        return genero;
     }
 
     public CidadeOutputDto getCidade() {
@@ -72,8 +76,8 @@ public class PessoaOutputDto {
         this.email = email;
     }
 
-    public void setSexo(Integer sexo) {
-        this.sexo = sexo;
+    public void setGenero(GeneroOutputDto genero) {
+        this.genero = genero;
     }
 
     public void setCidade(CidadeOutputDto cidade) {

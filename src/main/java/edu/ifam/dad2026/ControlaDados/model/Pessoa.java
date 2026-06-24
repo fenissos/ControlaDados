@@ -18,8 +18,9 @@ public class Pessoa {
 
     private String email;
 
-    @Column
-    private Integer sexo;
+    @ManyToOne
+    @JoinColumn(name = "genero_id")
+    private Genero genero;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "cidade_id")
@@ -28,11 +29,11 @@ public class Pessoa {
     public Pessoa() {
     }
 
-    public Pessoa(String nome, String cpf, String email, Integer sexo, Cidade cidade) {
+    public Pessoa(String nome, String cpf, String email, Genero genero, Cidade cidade) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
-        this.sexo = sexo;
+        this.genero = genero;
         this.cidade = cidade;
     }
 
@@ -52,8 +53,8 @@ public class Pessoa {
         return email;
     }
 
-    public Integer getSexo() {
-        return sexo;
+    public Genero getGenero() {
+        return genero;
     }
 
     public Cidade getCidade() {
@@ -76,8 +77,8 @@ public class Pessoa {
         this.email = email;
     }
 
-    public void setSexo(Integer sexo) {
-        this.sexo = sexo;
+    public void setGenero(Genero genero) {
+        this.genero = genero;
     }
 
     public void setCidade(Cidade cidade) {
